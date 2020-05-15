@@ -60,11 +60,11 @@ public class Runtime {
             Method method = String.class.getDeclaredMethod("hashCode");
             ArtMethod artMethodStruct = ArtMethod.of(method);
             long entryPointFromQuickCompiledCode = artMethodStruct.getEntryPointFromQuickCompiledCode();
-            Logger.w("Runtime", "isThumb2, entry: " + Long.toHexString(entryPointFromQuickCompiledCode));
+            if (Debug.DEBUG) Logger.w("Runtime", "isThumb2, entry: " + Long.toHexString(entryPointFromQuickCompiledCode));
             isThumb = ((entryPointFromQuickCompiledCode & 1) == 1);
             return isThumb;
         } catch (Throwable e) {
-            Logger.w("Runtime", "isThumb2, error: " + e);
+            if (Debug.DEBUG) Logger.w("Runtime", "isThumb2, error: " + e);
             return true; // Default Thumb2.
         }
     }

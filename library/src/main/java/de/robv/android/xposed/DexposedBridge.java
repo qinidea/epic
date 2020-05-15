@@ -113,7 +113,7 @@ public final class DexposedBridge {
 			}
 		}
 
-		Logger.w(TAG, "hook: " + hookMethod + ", newMethod ? " + newMethod);
+		if (Debug.DEBUG) Logger.w(TAG, "hook: " + hookMethod + ", newMethod ? " + newMethod);
 
 		callbacks.add(callback);
 		if (newMethod) {
@@ -287,7 +287,7 @@ public final class DexposedBridge {
 				return null; //never reach.
 			} else {
 				// the exception cause by epic self, just log.
-				Logger.e(TAG, "epic cause exception in call bridge!!", throwable);
+				if (Debug.DEBUG) Logger.e(TAG, "epic cause exception in call bridge!!", throwable);
 			}
 			return null; // never reached.
 		} else {

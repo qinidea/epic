@@ -129,37 +129,37 @@ public final class EpicNative {
 
     public static long map(int length) {
         long m = mmap(length);
-        Logger.i(TAG, "Mapped memory of size " + length + " at " + addrHex(m));
+        if (Debug.DEBUG) Logger.i(TAG, "Mapped memory of size " + length + " at " + addrHex(m));
         return m;
     }
 
     public static boolean unmap(long address, int length) {
-        Logger.d(TAG, "Removing mapped memory of size " + length + " at " + addrHex(address));
+        if (Debug.DEBUG) Logger.d(TAG, "Removing mapped memory of size " + length + " at " + addrHex(address));
         return munmap(address, length);
     }
 
     public static void put(byte[] bytes, long dest) {
         if (Debug.DEBUG) {
-            Logger.d(TAG, "Writing memory to: " + addrHex(dest));
-            Logger.d(TAG, Debug.hexdump(bytes, dest));
+            if (Debug.DEBUG) Logger.d(TAG, "Writing memory to: " + addrHex(dest));
+            if (Debug.DEBUG) Logger.d(TAG, Debug.hexdump(bytes, dest));
         }
         memput(bytes, dest);
     }
 
     public static byte[] get(long src, int length) {
-        Logger.d(TAG, "Reading " + length + " bytes from: " + addrHex(src));
+        if (Debug.DEBUG) Logger.d(TAG, "Reading " + length + " bytes from: " + addrHex(src));
         byte[] bytes = memget(src, length);
-        Logger.d(TAG, Debug.hexdump(bytes, src));
+        if (Debug.DEBUG) Logger.d(TAG, Debug.hexdump(bytes, src));
         return bytes;
     }
 
     public static boolean unprotect(long addr, long len) {
-        Logger.d(TAG, "Disabling mprotect from " + addrHex(addr));
+        if (Debug.DEBUG) Logger.d(TAG, "Disabling mprotect from " + addrHex(addr));
         return munprotect(addr, len);
     }
 
     public static void copy(long src, long dst, int length) {
-        Logger.d(TAG, "Copy " + length + " bytes form " + addrHex(src) + " to " + addrHex(dst));
+        if (Debug.DEBUG) Logger.d(TAG, "Copy " + length + " bytes form " + addrHex(src) + " to " + addrHex(dst));
         memcpy(src, dst, length);
     }
 

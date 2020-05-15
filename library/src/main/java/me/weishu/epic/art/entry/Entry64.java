@@ -116,7 +116,7 @@ public class Entry64 {
     //endregion
 
     private static Object referenceBridge(long x1, long self, long struct, long x4, long x5, long x6, long x7) {
-        Logger.i(TAG, "enter bridge function.");
+        if (Debug.DEBUG) Logger.i(TAG, "enter bridge function.");
 
         // struct {
         //     void* sp;
@@ -126,15 +126,15 @@ public class Entry64 {
         // }
         // sp + 16 = r4
 
-        Logger.d(TAG, "self:" + Long.toHexString(self));
+        if (Debug.DEBUG) Logger.d(TAG, "self:" + Long.toHexString(self));
         final long nativePeer = XposedHelpers.getLongField(Thread.currentThread(), "nativePeer");
-        Logger.d(TAG, "java thread native peer:" + Long.toHexString(nativePeer));
+        if (Debug.DEBUG) Logger.d(TAG, "java thread native peer:" + Long.toHexString(nativePeer));
 
-        Logger.d(TAG, "struct:" + Long.toHexString(struct));
+        if (Debug.DEBUG) Logger.d(TAG, "struct:" + Long.toHexString(struct));
 
         final long sp = ByteBuffer.wrap(EpicNative.get(struct, 8)).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
-        Logger.d(TAG, "stack:" + sp);
+        if (Debug.DEBUG) Logger.d(TAG, "stack:" + sp);
 
         final byte[] rr1 = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(x1).array();
         final byte[] r2 = EpicNative.get(struct + 8, 8);
@@ -142,10 +142,10 @@ public class Entry64 {
         final byte[] r3 = EpicNative.get(struct + 16, 8);
 
         final long sourceMethod = ByteBuffer.wrap(EpicNative.get(struct + 24, 8)).order(ByteOrder.LITTLE_ENDIAN).getLong();
-        Logger.d(TAG, "sourceMethod:" + Long.toHexString(sourceMethod));
+        if (Debug.DEBUG) Logger.d(TAG, "sourceMethod:" + Long.toHexString(sourceMethod));
 
         Epic.MethodInfo originMethodInfo = Epic.getMethodInfo(sourceMethod);
-        Logger.d(TAG, "originMethodInfo :" + originMethodInfo);
+        if (Debug.DEBUG) Logger.d(TAG, "originMethodInfo :" + originMethodInfo);
 
         boolean isStatic = originMethodInfo.isStatic;
 
@@ -185,7 +185,7 @@ public class Entry64 {
         } else {
 
             receiver = EpicNative.getObject(self, x1);
-            Logger.i(TAG, "this :" + receiver);
+            if (Debug.DEBUG) Logger.i(TAG, "this :" + receiver);
 
             do {
                 if (numberOfArgs == 0) break;
@@ -209,12 +209,12 @@ public class Entry64 {
             } while (false);
         }
 
-        Logger.i(TAG, "arguments:" + Arrays.toString(arguments));
+        if (Debug.DEBUG) Logger.i(TAG, "arguments:" + Arrays.toString(arguments));
 
         Class<?> returnType = originMethodInfo.returnType;
         Object artMethod = originMethodInfo.method;
 
-        Logger.d(TAG, "leave bridge function");
+        if (Debug.DEBUG) Logger.d(TAG, "leave bridge function");
 
         if (returnType == void.class) {
             onHookVoid(artMethod, receiver, arguments);
@@ -288,7 +288,7 @@ public class Entry64 {
     public static Method getBridgeMethod(Class<?> returnType) {
         try {
             final String bridgeMethod = bridgeMethodMap.get(returnType.isPrimitive() ? returnType : Object.class);
-            Logger.d(TAG, "bridge method:" + bridgeMethod + ", map:" + bridgeMethodMap);
+            if (Debug.DEBUG) Logger.d(TAG, "bridge method:" + bridgeMethod + ", map:" + bridgeMethodMap);
             Method method = Entry64.class.getDeclaredMethod(bridgeMethod, long.class, long.class,
                     long.class, long.class, long.class, long.class, long.class);
             method.setAccessible(true);

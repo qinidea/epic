@@ -247,13 +247,13 @@ public class ArtMethod {
                 byte[] backupAddress = EpicNative.get(address, 4);
                 if (!Arrays.equals(currentAddress, backupAddress)) {
                     if (Debug.DEBUG) {
-                        Logger.i(TAG, "the address of java method was moved by gc, backup it now! origin address: 0x"
+                        if (Debug.DEBUG) Logger.i(TAG, "the address of java method was moved by gc, backup it now! origin address: 0x"
                                 + Arrays.toString(currentAddress) + " , currentAddress: 0x" + Arrays.toString(backupAddress));
                     }
                     EpicNative.put(currentAddress, address);
                     return invokeInternal(receiver, args);
                 } else {
-                    Logger.i(TAG, "the address is same with last invoke, not moved by gc");
+                    if (Debug.DEBUG) Logger.i(TAG, "the address is same with last invoke, not moved by gc");
                 }
             }
         }
@@ -369,13 +369,13 @@ public class ArtMethod {
      */
     public void ensureResolved() {
         if (!Modifier.isStatic(getModifiers())) {
-            Logger.d(TAG, "not static, ignore.");
+            if (Debug.DEBUG) Logger.d(TAG, "not static, ignore.");
             return;
         }
 
         try {
             invoke(null);
-            Logger.d(TAG, "ensure resolved");
+            if (Debug.DEBUG) Logger.d(TAG, "ensure resolved");
         } catch (Exception ignored) {
             // we should never make a successful call.
         }
@@ -429,7 +429,7 @@ public class ArtMethod {
         final long rule1Address = EpicNative.getMethodAddress(rule1);
         final long size = Math.abs(rule2Address - rule1Address);
         artMethodSize = (int) size;
-        Logger.d(TAG, "art Method size: " + size);
+        if (Debug.DEBUG) Logger.d(TAG, "art Method size: " + size);
         return artMethodSize;
     }
 

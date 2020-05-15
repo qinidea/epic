@@ -121,7 +121,7 @@ public class Entry {
     //endregion
 
     private static Object referenceBridge(int r1, int self, int struct) {
-        Logger.i(TAG, "enter bridge function.");
+        if (Debug.DEBUG) Logger.i(TAG, "enter bridge function.");
 
         // struct {
         //     void* sp;
@@ -131,7 +131,7 @@ public class Entry {
         // }
         // sp + 16 = r4
 
-        Logger.i(TAG, "struct:" + Long.toHexString(struct));
+        if (Debug.DEBUG) Logger.i(TAG, "struct:" + Long.toHexString(struct));
 
         final int sp = ByteBuffer.wrap(EpicNative.get(struct, 4)).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
@@ -142,26 +142,26 @@ public class Entry {
 
         final byte[] r3 = EpicNative.get(struct + 8, 4);
 
-        Logger.d(TAG, "r1:" + Debug.hexdump(rr1, 0));
-        Logger.d(TAG, "r2:" + Debug.hexdump(r2, 0));
-        Logger.d(TAG, "r3:" + Debug.hexdump(r3, 0));
+        if (Debug.DEBUG) Logger.d(TAG, "r1:" + Debug.hexdump(rr1, 0));
+        if (Debug.DEBUG) Logger.d(TAG, "r2:" + Debug.hexdump(r2, 0));
+        if (Debug.DEBUG) Logger.d(TAG, "r3:" + Debug.hexdump(r3, 0));
 
         final int sourceMethod = ByteBuffer.wrap(EpicNative.get(struct + 12, 4)).order(ByteOrder.LITTLE_ENDIAN).getInt();
-        Logger.i(TAG, "sourceMethod:" + Integer.toHexString(sourceMethod));
+        if (Debug.DEBUG) Logger.i(TAG, "sourceMethod:" + Integer.toHexString(sourceMethod));
 
         Epic.MethodInfo originMethodInfo = Epic.getMethodInfo(sourceMethod);
-        Logger.i(TAG, "originMethodInfo :" + originMethodInfo);
+        if (Debug.DEBUG) Logger.i(TAG, "originMethodInfo :" + originMethodInfo);
 
         final Pair<Object, Object[]> constructArguments = constructArguments(originMethodInfo, self, rr1, r2, r3, sp);
         Object receiver = constructArguments.first;
         Object[] arguments = constructArguments.second;
 
-        Logger.i(TAG, "arguments:" + Arrays.toString(arguments));
+        if (Debug.DEBUG) Logger.i(TAG, "arguments:" + Arrays.toString(arguments));
 
         Class<?> returnType = originMethodInfo.returnType;
         Object artMethod = originMethodInfo.method;
 
-        Logger.i(TAG, "leave bridge function");
+        if (Debug.DEBUG) Logger.i(TAG, "leave bridge function");
 
         if (returnType == void.class) {
             onHookVoid(artMethod, receiver, arguments);
@@ -320,7 +320,7 @@ public class Entry {
                             if (Arrays.equals(bytes, otherStoreInStack)) {
                                 int originR3Index = sp + i - 4;
                                 final byte[] originR3 = EpicNative.get(originR3Index, 4);
-                                Logger.d(TAG, "found other arguments in stack, index:" + i + ", origin r3:" + Arrays.toString(originR3));
+                                if (Debug.DEBUG) Logger.d(TAG, "found other arguments in stack, index:" + i + ", origin r3:" + Arrays.toString(originR3));
                                 System.arraycopy(originR3, 0, argBytes, 12, 4);
                                 break;
                             }
@@ -334,7 +334,7 @@ public class Entry {
         }
         //endregion
 
-        Logger.d(TAG, "argBytes: " + Debug.hexdump(argBytes, 0));
+        if (Debug.DEBUG) Logger.d(TAG, "argBytes: " + Debug.hexdump(argBytes, 0));
 
         for (int i = 0; i < numberOfArgs; i++) {
             final Class<?> typeOfArg = typeOfArgs[i];
@@ -363,7 +363,7 @@ public class Entry {
 
     private static Object wrapArgument(Class<?> type, int self, byte[] value) {
         final ByteBuffer byteBuffer = ByteBuffer.wrap(value).order(ByteOrder.LITTLE_ENDIAN);
-        Logger.d(TAG, "wrapArgument: type:" + type);
+        if (Debug.DEBUG) Logger.d(TAG, "wrapArgument: type:" + type);
         if (type.isPrimitive()) {
             if (type == int.class) {
                 return byteBuffer.getInt();
@@ -407,7 +407,7 @@ public class Entry {
     public static Method getBridgeMethod(Class<?> returnType) {
         try {
             final String bridgeMethod = bridgeMethodMap.get(returnType.isPrimitive() ? returnType : Object.class);
-            Logger.i(TAG, "bridge method:" + bridgeMethod + ", map:" + bridgeMethodMap);
+            if (Debug.DEBUG) Logger.i(TAG, "bridge method:" + bridgeMethod + ", map:" + bridgeMethodMap);
             Method method = Entry.class.getDeclaredMethod(bridgeMethod, int.class, int.class, int.class);
             method.setAccessible(true);
             return method;

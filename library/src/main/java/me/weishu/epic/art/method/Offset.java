@@ -211,9 +211,9 @@ class Offset {
             }
         }
         if (Debug.DEBUG) {
-            Logger.i(TAG, "quick code offset: " + ART_QUICK_CODE_OFFSET.getOffset());
-            Logger.i(TAG, "access flag offset: " + ART_ACCESS_FLAG_OFFSET.getOffset());
-            Logger.i(TAG, "jni code offset: " + ART_JNI_ENTRY_OFFSET.getOffset());
+            if (Debug.DEBUG) Logger.i(TAG, "quick code offset: " + ART_QUICK_CODE_OFFSET.getOffset());
+            if (Debug.DEBUG) Logger.i(TAG, "access flag offset: " + ART_ACCESS_FLAG_OFFSET.getOffset());
+            if (Debug.DEBUG) Logger.i(TAG, "jni code offset: " + ART_JNI_ENTRY_OFFSET.getOffset());
 
         }
     }

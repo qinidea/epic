@@ -62,13 +62,13 @@ public final class Epic {
             } else {
                 thumb2 = false;
                 ShellCode = new Thumb2();
-                Logger.w(TAG, "ARM32, not support now.");
+                if (Debug.DEBUG) Logger.w(TAG, "ARM32, not support now.");
             }
         }
         if (ShellCode == null) {
             throw new RuntimeException("Do not support this ARCH now!! API LEVEL:" + apiLevel + " thumb2 ? : " + thumb2);
         }
-        Logger.i(TAG, "Using: " + ShellCode.getName());
+        if (Debug.DEBUG) Logger.i(TAG, "Using: " + ShellCode.getName());
     }
 
     public static boolean hookMethod(Constructor origin) {
@@ -104,13 +104,13 @@ public final class Epic {
 
         long originEntry = artOrigin.getEntryPointFromQuickCompiledCode();
         if (originEntry == ArtMethod.getQuickToInterpreterBridge()) {
-            Logger.i(TAG, "this method is not compiled, compile it now. current entry: 0x" + Long.toHexString(originEntry));
+            if (Debug.DEBUG) Logger.i(TAG, "this method is not compiled, compile it now. current entry: 0x" + Long.toHexString(originEntry));
             boolean ret = artOrigin.compile();
             if (ret) {
                 originEntry = artOrigin.getEntryPointFromQuickCompiledCode();
-                Logger.i(TAG, "compile method success, new entry: 0x" + Long.toHexString(originEntry));
+                if (Debug.DEBUG) Logger.i(TAG, "compile method success, new entry: 0x" + Long.toHexString(originEntry));
             } else {
-                Logger.e(TAG, "compile method failed...");
+                if (Debug.DEBUG) Logger.e(TAG, "compile method failed...");
                 return false;
                 // return hookInterpreterBridge(artOrigin);
             }
@@ -118,8 +118,8 @@ public final class Epic {
 
         ArtMethod backupMethod = artOrigin.backup();
 
-        Logger.i(TAG, "backup method address:" + Debug.addrHex(backupMethod.getAddress()));
-        Logger.i(TAG, "backup method entry :" + Debug.addrHex(backupMethod.getEntryPointFromQuickCompiledCode()));
+        if (Debug.DEBUG) Logger.i(TAG, "backup method address:" + Debug.addrHex(backupMethod.getAddress()));
+        if (Debug.DEBUG) Logger.i(TAG, "backup method entry :" + Debug.addrHex(backupMethod.getEntryPointFromQuickCompiledCode()));
 
         ArtMethod backupList = getBackMethod(artOrigin);
         if (backupList == null) {
@@ -193,7 +193,7 @@ public final class Epic {
         long sizeInfo1 = entryPoint - 4;
         byte[] bytes = EpicNative.get(sizeInfo1, 4);
         int size = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
-        Logger.d(TAG, "getQuickCompiledCodeSize: " + size);
+        if (Debug.DEBUG) Logger.d(TAG, "getQuickCompiledCodeSize: " + size);
         return size;
     }
 

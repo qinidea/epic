@@ -52,7 +52,7 @@ class Trampoline {
         boolean modified = segments.add(originMethod);
         if (!modified) {
             // Already hooked, ignore
-            Logger.d(TAG, originMethod + " is already hooked, return.");
+            if (Debug.DEBUG) Logger.d(TAG, originMethod + " is already hooked, return.");
             return true;
         }
 
@@ -62,7 +62,7 @@ class Trampoline {
         int quickCompiledCodeSize = Epic.getQuickCompiledCodeSize(originMethod);
         int sizeOfDirectJump = shellCode.sizeOfDirectJump();
         if (quickCompiledCodeSize < sizeOfDirectJump) {
-            Logger.w(TAG, originMethod.toGenericString() + " quickCompiledCodeSize: " + quickCompiledCodeSize);
+            if (Debug.DEBUG) Logger.w(TAG, originMethod.toGenericString() + " quickCompiledCodeSize: " + quickCompiledCodeSize);
             originMethod.setEntryPointFromQuickCompiledCode(getTrampolinePc());
             return true;
         }
@@ -88,7 +88,7 @@ class Trampoline {
         }
         trampolineSize = getSize();
         trampolineAddress = EpicNative.map(trampolineSize);
-        Logger.d(TAG, "Trampoline alloc:" + trampolineSize + ", addr: 0x" + Long.toHexString(trampolineAddress));
+        if (Debug.DEBUG) Logger.d(TAG, "Trampoline alloc:" + trampolineSize + ", addr: 0x" + Long.toHexString(trampolineAddress));
     }
 
     private void free() {
@@ -111,7 +111,7 @@ class Trampoline {
     }
 
     private byte[] create() {
-        Logger.d(TAG, "create trampoline." + segments);
+        if (Debug.DEBUG) Logger.d(TAG, "create trampoline." + segments);
         byte[] mainPage = new byte[getSize()];
 
         int offset = 0;
@@ -130,7 +130,7 @@ class Trampoline {
 
     private boolean activate() {
         long pc = getTrampolinePc();
-        Logger.d(TAG, "Writing direct jump entry " + Debug.addrHex(pc) + " to origin entry: 0x" + Debug.addrHex(jumpToAddress));
+        if (Debug.DEBUG) Logger.d(TAG, "Writing direct jump entry " + Debug.addrHex(pc) + " to origin entry: 0x" + Debug.addrHex(jumpToAddress));
         synchronized (Trampoline.class) {
             return EpicNative.activateNative(jumpToAddress, pc, shellCode.sizeOfDirectJump(),
                     shellCode.sizeOfBridgeJump(), shellCode.createDirectJump(pc));
@@ -158,10 +158,10 @@ class Trampoline {
         long sourceAddress = source.getAddress();
         long structAddress = EpicNative.malloc(4);
 
-        Logger.d(TAG, "targetAddress:"+ Debug.longHex(targetAddress));
-        Logger.d(TAG, "sourceAddress:"+ Debug.longHex(sourceAddress));
-        Logger.d(TAG, "targetEntry:"+ Debug.longHex(targetEntry));
-        Logger.d(TAG, "structAddress:"+ Debug.longHex(structAddress));
+        if (Debug.DEBUG) Logger.d(TAG, "targetAddress:"+ Debug.longHex(targetAddress));
+        if (Debug.DEBUG) Logger.d(TAG, "sourceAddress:"+ Debug.longHex(sourceAddress));
+        if (Debug.DEBUG) Logger.d(TAG, "targetEntry:"+ Debug.longHex(targetEntry));
+        if (Debug.DEBUG) Logger.d(TAG, "structAddress:"+ Debug.longHex(structAddress));
 
         return shellCode.createBridgeJump(targetAddress, targetEntry, sourceAddress, structAddress);
     }
