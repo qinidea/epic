@@ -23,6 +23,7 @@ import android.app.AndroidAppHelper;
 import android.os.Build;
 import android.util.Log;
 
+import com.taobao.android.dexposed.utility.Debug;
 import com.taobao.android.dexposed.utility.Logger;
 import com.taobao.android.dexposed.utility.Runtime;
 

@@ -16,6 +16,7 @@
 
 package me.weishu.epic.art.entry;
 
+import com.taobao.android.dexposed.utility.Debug;
 import com.taobao.android.dexposed.utility.Logger;
 
 import java.lang.reflect.Method;
