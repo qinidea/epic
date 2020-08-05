@@ -18,6 +18,9 @@ android {
             abiFilters 'armeabi'
         }
         externalNativeBuild {
+            ndkBuild {
+                abiFilters "armeabi"
+            }
             cmake {
                 cppFlags "-std=c++11"
                 arguments "-DANDROID_TOOLCHAIN=gcc"
